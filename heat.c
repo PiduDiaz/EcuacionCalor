@@ -22,20 +22,22 @@ int main(){
 
     printf("Eliga el metodo de euler que quiere utilizar (1 = explicito ; 2 = implicito) \n");
     scanf("%d",&eleccion);
-    
-    system("pause");
 
     
     printf("Introduzca el tiempo tiempo final \n");
-    scanf("%d",&tiempof);
-    printf("Introduzca el tamaño del paso temporal (Ejem: 0.1) \n");
-    scanf("%d",&dt);
+    scanf("%lf",&tiempof);
+
+    printf("Introduzca el tamano del paso temporal (Ejem: 0.1) \n");
+    scanf("%lf",&dt);
+
     printf("Introduzca la primera condicion de frontera \n");
-    scanf("%d",&I1);
+    scanf("%lf",&I1);
+
     printf("Introduzca la segunda condicion de frontera \n");
-    scanf("%d",&I2);
+    scanf("%lf",&I2);
+
     printf("Introduzca el valor de alfa \n");
-    scanf("%d",&alfa);
+    scanf("%lf",&alfa);
 
     // constante lamda
     double lambda;
@@ -45,10 +47,12 @@ int main(){
     n= tiempof/dt;
 
     //matriz de datos 
-    double M[n][101];
+    double **M;
+
+    M=alloc_2D_double(n,101);
 
      //condiciones iniciales frontera
-    for(i=0;i<100;i++){
+    for(i=0;i<n;i++){
         M[i][0]=I1;
         M[i][100]=I2;
     }
@@ -144,9 +148,8 @@ int main(){
             free(B);
             double_2D_array_free(A);
         }//(i=1;i<n;i++)
-    }//(eleccion==2)
+    }//(eleccion==2)   
        
-
     printf("Los resultados de la ultima iteracion fueron los siguientes \n");
     printf("Con x=0.01: %.2f \n",M[n-1][1]);
     printf("Con x=0.2: %.2f \n",M[n-1][20]);
@@ -154,6 +157,8 @@ int main(){
     printf("Con x=0.6: %.2f \n",M[n-1][60]);
     printf("Con x=0.8: %.2f \n",M[n-1][80]);
 
+    system("pause");
+    double_2D_array_free(M);
     return 0;
     }
 
@@ -162,7 +167,7 @@ float CalQ(float a, float b){
     float a1 , b1 , c1;
 
     a1 = cos(MPI*b);
-    b1 =sen(2*MPI*a);
+    b1 =sin(2*MPI*a);
     c1= a1*b1;
 
     return c1;
