@@ -1,3 +1,0 @@
-// multiplicacion matriz vector
-
-
