@@ -1,19 +1,196 @@
 //main
 #include <stdio.h>
 #include <stdlib.h>
+#include <math.h>
+
+
+const double MPI=3.14159265358979323846;
+const double EULER = 2.71828182845904523536;
+
+float CalQ(float a, float b);
+double **alloc_2D_double(int nrows, int ncolumns);
+void double_2D_array_free(double **array);
 
 int main(){
 
     int eleccion;
-    int condicion = 0;
+    int i , j , k, n; 
+    double tiempof , dt , ipaso, alfa, I1, I2;
+    
+    double dx = 0.01;
 
-    while(condicion == 0){
 
-        printf("Eliga el metodo de euler que quiere utilizar (1 = explicito ; 2 = implicito) \n");
-        scanf("%d",&eleccion);
+    printf("Eliga el metodo de euler que quiere utilizar (1 = explicito ; 2 = implicito) \n");
+    scanf("%d",&eleccion);
+    
+    system("pause");
 
-        
+    
+    printf("Introduzca el tiempo tiempo final \n");
+    scanf("%d",&tiempof);
+    printf("Introduzca el tamaño del paso temporal (Ejem: 0.1) \n");
+    scanf("%d",&dt);
+    printf("Introduzca la primera condicion de frontera \n");
+    scanf("%d",&I1);
+    printf("Introduzca la segunda condicion de frontera \n");
+    scanf("%d",&I2);
+    printf("Introduzca el valor de alfa \n");
+    scanf("%d",&alfa);
+
+    // constante lamda
+    double lambda;
+    lambda = (alfa * dt)/(0.0001);
+
+   // numero de iteraciones
+    n= tiempof/dt;
+
+    //matriz de datos 
+    double M[n][101];
+
+     //condiciones iniciales frontera
+    for(i=0;i<100;i++){
+        M[i][0]=I1;
+        M[i][100]=I2;
     }
-       system("pause");
+    //condiciones iniciales (Las filas seran con respecto al tiempo y las columnas respecto a la posicion)
+    for(i=1;i<99;i++){
+        ipaso=i*0.01;
+        M[0][i]=pow(EULER , ipaso);
+    }
+
+    //euler explicito-------------------------------------------------------------------------------
+    if(eleccion==1){
+    double  T1 , T2 ,Ope;
+
+    //Se calcula la temperatura en del i-esimo paso de tiempo en la posicion j-esima
+    for(i=1;i<n;i++){
+        for(j=1;j<100;j++){
+
+            T1= M[i-1][j-1]-(2*M[i-1][j])+M[i-1][j+1];
+            T2 = dt * CalQ(i*0.01,i*dt);
+
+            Ope = (lambda*T1)+ T2 + M[i-1][j];
+            M[i][j]= Ope;
+        }//for(j=1;j<99;j++)
+    }//for(i=1;i<n;i++)
+    }//explicito
+
+    //euler implicito------------------------------------------------------------------------------------
+    if(eleccion==2){
+        double con1, con2;
+        con1 = lambda*I1;
+        con2 = lambda*I2;
+
+        for(i=1;i<n;i++){
+            double **A;
+            double *B, *C;
+            
+            //creacion de matriz dinamica
+            A=alloc_2D_double(99,99);
+            B=(double *)malloc(99*sizeof(double));
+            C=(double *)malloc(99*sizeof(double));
+
+            if ( A==NULL ){
+                printf("Allocation error");
+                exit(1);
+            }
+            if ( B==NULL ){
+                printf("Allocation error");
+                exit(1);
+            }
+            if ( C==NULL ){
+                printf("Allocation error");
+                exit(1);
+            }
+
+            //frontera del arreglo C
+            C[0]=M[i-1][1]+(dt*CalQ(0.01,i*dt))+I1;
+            C[98]=M[i-1][99]+(dt*CalQ(0.99,i*dt))+I2;
+
+            //se llena el arreglo C
+            for(j=1;j<98;j++){
+                C[j]= M[i-1][j+1]+(dt*CalQ(i*0.01,i*dt));
+            }
+
+            //se llena el arreglo A
+            double lambda2;
+            lambda2 = 1 + (2*lambda);
+            for(j=0;j<99;j++){
+                for(k=0;k<99;k++){
+                    if(j==k){
+                        A[j][k]=lambda2;
+                    }
+                    if (j-k==-1){
+                        A[j][k]=-1*lambda;
+                    }
+                    if (j-k==1){
+                        A[j][k]=-1*lambda;
+                    }
+
+                }
+
+            }
+
+
+            //se llama a la funcion solve
+            //B=solve(A,C);
+            
+            //se ingresa los resultados a la matriz M
+            for(j=0;j<99;j++){
+                M[i][j+1]=B[j];
+            }
+
+            free(C);
+            free(B);
+            double_2D_array_free(A);
+        }//(i=1;i<n;i++)
+    }//(eleccion==2)
+       
+
+    printf("Los resultados de la ultima iteracion fueron los siguientes \n");
+    printf("Con x=0.01: %.2f \n",M[n-1][1]);
+    printf("Con x=0.2: %.2f \n",M[n-1][20]);
+    printf("Con x=0.4: %.2f \n",M[n-1][40]);
+    printf("Con x=0.6: %.2f \n",M[n-1][60]);
+    printf("Con x=0.8: %.2f \n",M[n-1][80]);
+
     return 0;
     }
+
+//---------------------------------------------------------------------------------------------------------------
+float CalQ(float a, float b){
+    float a1 , b1 , c1;
+
+    a1 = cos(MPI*b);
+    b1 =sen(2*MPI*a);
+    c1= a1*b1;
+
+    return c1;
+}
+//-----------------------------------------------------------------------------------------------------------------
+double **alloc_2D_double(int nrows, int ncolumns)
+{
+  int i;
+
+  double **array = (double **)malloc(nrows*sizeof(double *));
+  if (array==NULL)
+    return NULL;
+  array[0] = (double *)malloc(nrows*ncolumns*sizeof(double));
+  if (array[0]==NULL)
+     return NULL;
+
+  for (i = 1; i < nrows; ++i)
+    array[i] = array[0] + i * ncolumns;
+
+  return array;
+
+}
+//--------------------------------------------------------------------------------------------------------------------
+void double_2D_array_free(double **array)
+{
+  /*Frees the memory previously allocated by alloc_2D_double*/
+  free(array[0]);
+  free(array);
+}
+
+
