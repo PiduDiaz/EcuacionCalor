@@ -21,7 +21,7 @@ int main(int argc, char *argv[]){
     scanf("%d",&eleccion);
 
     
-    printf("Introduzca el tiempo tiempo final \n");
+    printf("Introduzca el tiempo final \n");
     scanf("%lf",&tiempof);
 
     printf("Introduzca el tamano del paso temporal (Ejem: 0.1) \n");
@@ -48,7 +48,7 @@ int main(int argc, char *argv[]){
 
     M=alloc_2D_double(n,101);
 
-     //condiciones iniciales frontera
+    //condiciones iniciales frontera
     for(i=0;i<n;i++){
         M[i][0]=I1;
         M[i][100]=I2;
@@ -61,7 +61,7 @@ int main(int argc, char *argv[]){
 
     //euler explicito-------------------------------------------------------------------------------
     if(eleccion==1){
-    double  T1 , T2 ,Ope;
+    double  T1 , T2 ,Ope, jpaso ,iipaso;
 
     //Se calcula la temperatura en del i-esimo paso de tiempo en la posicion j-esima
     for(i=1;i<n;i++){
@@ -74,6 +74,20 @@ int main(int argc, char *argv[]){
             M[i][j]= Ope;
         }//for(j=1;j<99;j++)
     }//for(i=1;i<n;i++)
+
+    //Registro de datos para gráficar: Creación de archivo
+
+    FILE *datos= fopen("datos.txt","w");
+    for (i=0;i<n;i++){
+        iipaso = i*dt;
+        for (j=0;j<101;j++){
+            jpaso = j*0.01;
+            fprintf(datos,"%.2f,%.2f,%.2f\n",jpaso,iipaso,M[i][j]);
+        }
+    } 
+    fclose(datos);
+
+
     }//explicito
 
     //euler implicito------------------------------------------------------------------------------------
@@ -146,7 +160,13 @@ int main(int argc, char *argv[]){
             double_2D_array_free(A);
         }//(i=1;i<n;i++)
     }//(eleccion==2)   
-       
+    
+
+
+
+
+
+
     printf("Los resultados de la ultima iteracion fueron los siguientes \n");
     printf("Con x=0.01: %.2f \n",M[n-1][1]);
     printf("Con x=0.2: %.2f \n",M[n-1][20]);
