@@ -2,6 +2,7 @@
 #include <stdio.h>
 #include <stdlib.h>
 #include <math.h>
+#include <getopt.h>
 #include "tools.h"
 
 
@@ -10,14 +11,31 @@ void double_2D_array_free(double **array);
 
 int main(int argc, char *argv[]){
 
-    int eleccion;
+    int eleccion , ban ,opcion;
     int i , j , k, n; 
     double tiempof , dt , ipaso, alfa, I1, I2;
     
     double dx = 0.01;
+    
+    ban=0;
 
+    while ((opcion = getopt (argc, argv, "r")) != -1)
+{
+    switch (opcion)
+      {
 
-    printf("Eliga el metodo de euler que quiere utilizar (1 = explicito ; 2 = implicito) \n");
+      case 'r':
+        ban = 1;
+        printf("funciono");
+        break;
+
+        // en caso de error getopt devuelve el caracter ?
+      case '?':
+        printf ("Opcion desconocida");
+        return 1;}
+}
+
+    printf("\n Eliga el metodo de euler que quiere utilizar (1 = explicito ; 2 = implicito) \n");
     scanf("%d",&eleccion);
 
     
@@ -68,11 +86,22 @@ int main(int argc, char *argv[]){
         for(j=1;j<100;j++){
 
             T1= M[i-1][j-1]-(2*M[i-1][j])+M[i-1][j+1];
-            T2 = dt * CalQ(i*0.01,i*dt);
+            T2 = dt * CalQ(j*0.01,i*dt);
 
             Ope = (lambda*T1)+ T2 + M[i-1][j];
             M[i][j]= Ope;
         }//for(j=1;j<99;j++)
+
+        //condicion para saber si es una iteracion multiplo de 10
+        if(i%10==0){
+            FILE *restart= fopen("restart.txt","a");
+            for(k=0;k<101;k++){
+                fprintf(restart,"%.2f,",M[i][k]);
+            }
+            fprintf(restart,"%.2f,%.2f,%.2f \n",dt,dx,lambda);
+            fclose(restart);    
+        }
+
     }//for(i=1;i<n;i++)
 
     //Registro de datos para gráficar: Creación de archivo

@@ -1,7 +1,7 @@
 
 BINARY = heat
 
-CFLAGS1 = -O1
+
 CFLAGS2 = -g -O1
 LDFLAGS = -lm 
 
@@ -13,10 +13,10 @@ heat: tools.o heat.o
 	gcc tools.o heat.o -o $(BINARY) $(LDFLAGS)
 
 tools.o: tools.c tools.h
-	gcc $(CFLAGS1) -c tools.c $(LDFLAGS)
+	gcc  -c tools.c $(LDFLAGS)
 
 heat.o: heat.c tools.h
-	gcc $(CFLAGS1) -c heat.c $(LDFLAGS)
+	gcc  -c heat.c $(LDFLAGS)
 
 
 Debug: tools.o heat.o
