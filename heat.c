@@ -26,7 +26,6 @@ int main(int argc, char *argv[]){
 
       case 'r':
         ban = 1;
-        printf("funciono");
         break;
 
         // en caso de error getopt devuelve el caracter ?
@@ -35,7 +34,7 @@ int main(int argc, char *argv[]){
         return 1;}
 }
 
-    printf("\n Eliga el metodo de euler que quiere utilizar (1 = explicito ; 2 = implicito) \n");
+    printf("\nEliga el metodo de euler que quiere utilizar (1 = explicito ; 2 = implicito) \n");
     scanf("%d",&eleccion);
 
     
@@ -74,7 +73,7 @@ int main(int argc, char *argv[]){
     //condiciones iniciales (Las filas seran con respecto al tiempo y las columnas respecto a la posicion)
     for(i=1;i<99;i++){
         ipaso=i*0.01;
-        M[0][i]=pow(EULER , ipaso);
+        M[0][i]=exp(ipaso);
     }
 
     //euler explicito-------------------------------------------------------------------------------
@@ -94,7 +93,7 @@ int main(int argc, char *argv[]){
 
         //condicion para saber si es una iteracion multiplo de 10
         if(i%10==0){
-            FILE *restart= fopen("restart.txt","a");
+            FILE *restart= fopen("restart.dat","a");
             for(k=0;k<101;k++){
                 fprintf(restart,"%.2f,",M[i][k]);
             }
