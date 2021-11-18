@@ -63,17 +63,17 @@ int main(int argc, char *argv[]){
     //matriz de datos 
     double **M;
 
-    M=alloc_2D_double(n,101);
+    M = alloc_2D_double(n,101);
 
     //condiciones iniciales frontera
     for(i=0;i<n;i++){
-        M[i][0]=I1;
-        M[i][100]=I2;
+        M[0][i]=I1;
+        M[100][i]=I2;
     }
     //condiciones iniciales (Las filas seran con respecto al tiempo y las columnas respecto a la posicion)
     for(i=1;i<99;i++){
         ipaso=i*0.01;
-        M[0][i]=exp(ipaso);
+        M[i][0]=exp(ipaso);
     }
 
     //euler explicito-------------------------------------------------------------------------------
@@ -84,22 +84,22 @@ int main(int argc, char *argv[]){
     for(i=1;i<n;i++){
         for(j=1;j<100;j++){
 
-            T1= M[i-1][j-1]-(2*M[i-1][j])+M[i-1][j+1];
+            T1= M[j-1][i-1]-(2*M[j][i-1])+M[j+1][i-1];
             T2 = dt * CalQ(j*0.01,i*dt);
 
-            Ope = (lambda*T1)+ T2 + M[i-1][j];
-            M[i][j]= Ope;
+            Ope = (lambda*T1)+ T2 + M[j][i-1];
+            M[j][i]= Ope;
         }//for(j=1;j<99;j++)
 
         //condicion para saber si es una iteracion multiplo de 10
-        if(i%10==0){
+       /* if(i%10==0){
             FILE *restart= fopen("restart.dat","a");
             for(k=0;k<101;k++){
                 fprintf(restart,"%.2f,",M[i][k]);
             }
             fprintf(restart,"%.2f,%.2f,%.2f \n",dt,dx,lambda);
             fclose(restart);    
-        }
+        } */
 
     }//for(i=1;i<n;i++)
 
@@ -110,7 +110,7 @@ int main(int argc, char *argv[]){
         iipaso = i*dt;
         for (j=0;j<101;j++){
             jpaso = j*0.01;
-            fprintf(datos,"%.2f,%.2f,%.2f\n",jpaso,iipaso,M[i][j]);
+            fprintf(datos,"%.2f,%.2f,%.2f\n",jpaso,iipaso,M[j][i]);
         }
     } 
     fclose(datos);
@@ -192,15 +192,12 @@ int main(int argc, char *argv[]){
 
 
 
-
-
-
     printf("Los resultados de la ultima iteracion fueron los siguientes \n");
-    printf("Con x=0.01: %.2f \n",M[n-1][1]);
-    printf("Con x=0.2: %.2f \n",M[n-1][20]);
-    printf("Con x=0.4: %.2f \n",M[n-1][40]);
-    printf("Con x=0.6: %.2f \n",M[n-1][60]);
-    printf("Con x=0.8: %.2f \n",M[n-1][80]);
+    printf("Con x=0.01: %.2f \n",M[1][n-1]);
+    printf("Con x=0.2: %.2f \n",M[20][n-1]);
+    printf("Con x=0.4: %.2f \n",M[40][n-1]);
+    printf("Con x=0.6: %.2f \n",M[60][n-1]);
+    printf("Con x=0.8: %.2f \n",M[80][n-1]);
 
     system("pause");
     double_2D_array_free(M);
