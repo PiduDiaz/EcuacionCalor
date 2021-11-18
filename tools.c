@@ -4,30 +4,22 @@
 #include "tools.h"
 
 //-----------------------------------------------------------------------------------------------------------------
-double **alloc_2D_double(int nrows, int ncolumns)
+double **alloc_2D_double(int nrows, int ncolumns) //credito de esta funcion a quien corresponda.
 {
   int i;
-
-  double **array = (double **)malloc(nrows*sizeof(double *));
-  if (array==NULL)
-    return NULL;
-  array[0] = (double *)malloc(nrows*ncolumns*sizeof(double));
-  if (array[0]==NULL)
-     return NULL;
-
-  for (i = 1; i < nrows; ++i)
-    array[i] = array[0] + i * ncolumns;
-
-  return array;
+	double **arreglo=NULL;
+	arreglo = (double**)malloc(nrows*sizeof(double*));
+	for (i=0; i<nrows; i++){
+		arreglo[i] = (double*)malloc(ncolumns*sizeof(double) );
+		if (arreglo[i] == NULL){
+			perror("ERROR. There is not enough memory");
+			exit(EXIT_FAILURE);
+		}
+	}
+	return arreglo;
 
 }
-//--------------------------------------------------------------------------------------------------------------------
-void double_2D_array_free(double **array)
-{
-  /*Frees the memory previously allocated by alloc_2D_double*/
-  free(array[0]);
-  free(array);
-}
+
 
 //---------------------------------------------------------------------------------------------------------------
 float CalQ(float a, float b){

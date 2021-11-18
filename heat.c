@@ -13,7 +13,7 @@ int main(int argc, char *argv[]){
 
     int eleccion , ban ,opcion;
     int i , j , k, n; 
-    double tiempof , dt , ipaso, alfa, I1, I2;
+    double tiempof , dt , ipaso, alfa, I1, I2, lol;
     
     double dx = 0.01;
     
@@ -58,7 +58,12 @@ int main(int argc, char *argv[]){
     lambda = (alfa * dt)/(0.0001);
 
    // numero de iteraciones
-    n= tiempof/dt;
+
+    lol= tiempof/dt;
+
+    n= (int) lol;
+
+    printf("Numero de iteraciones: %d \n",n);
 
     //matriz de datos 
     double **M;
@@ -67,13 +72,13 @@ int main(int argc, char *argv[]){
 
     //condiciones iniciales frontera
     for(i=0;i<n;i++){
-        M[0][i]=I1;
-        M[100][i]=I2;
+        M[i][0]=I1;
+        M[i][100]=I2;
     }
     //condiciones iniciales (Las filas seran con respecto al tiempo y las columnas respecto a la posicion)
-    for(i=1;i<99;i++){
+    for(i=1;i<100;i++){
         ipaso=i*0.01;
-        M[i][0]=exp(ipaso);
+        M[0][i]=exp(ipaso);
     }
 
     //euler explicito-------------------------------------------------------------------------------
@@ -84,11 +89,11 @@ int main(int argc, char *argv[]){
     for(i=1;i<n;i++){
         for(j=1;j<100;j++){
 
-            T1= M[j-1][i-1]-(2*M[j][i-1])+M[j+1][i-1];
+            T1= M[i-1][j-1]-(2*M[i-1][j])+M[i-1][j+1];
             T2 = dt * CalQ(j*0.01,i*dt);
 
-            Ope = (lambda*T1)+ T2 + M[j][i-1];
-            M[j][i]= Ope;
+            Ope = (lambda*T1)+ T2 + M[i-1][j];
+            M[i][j]= Ope;
         }//for(j=1;j<99;j++)
 
         //condicion para saber si es una iteracion multiplo de 10
@@ -110,7 +115,7 @@ int main(int argc, char *argv[]){
         iipaso = i*dt;
         for (j=0;j<101;j++){
             jpaso = j*0.01;
-            fprintf(datos,"%.2f,%.2f,%.2f\n",jpaso,iipaso,M[j][i]);
+            fprintf(datos,"%.2f,%.2f,%.2f\n",jpaso,iipaso,M[i][j]);
         }
     } 
     fclose(datos);
@@ -193,14 +198,18 @@ int main(int argc, char *argv[]){
 
 
     printf("Los resultados de la ultima iteracion fueron los siguientes \n");
-    printf("Con x=0.01: %.2f \n",M[1][n-1]);
-    printf("Con x=0.2: %.2f \n",M[20][n-1]);
-    printf("Con x=0.4: %.2f \n",M[40][n-1]);
-    printf("Con x=0.6: %.2f \n",M[60][n-1]);
-    printf("Con x=0.8: %.2f \n",M[80][n-1]);
+    printf("Con x=0.01: %.2f \n",M[n-1][1]);
+    printf("Con x=0.2: %.2f \n",M[n-1][20]);
+    printf("Con x=0.4: %.2f \n",M[n-1][40]);
+    printf("Con x=0.6: %.2f \n",M[n-1][60]);
+    printf("Con x=0.8: %.2f \n",M[n-1][80]);
 
     system("pause");
-    double_2D_array_free(M);
+
+    for (i=0;i<n;i++){
+    free(M[i]);
+    }
+    free(M);
     return 0;
     }
 
