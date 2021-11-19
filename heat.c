@@ -7,7 +7,6 @@
 
 
 double **alloc_2D_double(int nrows, int ncolumns);
-void double_2D_array_free(double **array);
 
 int main(int argc, char *argv[]){
 
@@ -115,7 +114,7 @@ int main(int argc, char *argv[]){
         iipaso = i*dt;
         for (j=0;j<101;j++){
             jpaso = j*0.01;
-            fprintf(datos,"%.2f,%.2f,%.2f\n",jpaso,iipaso,M[i][j]);
+            fprintf(datos,"%.4f,%.4f,%.4f\n",jpaso,iipaso,M[i][j]);
         }
     } 
     fclose(datos);
@@ -190,7 +189,10 @@ int main(int argc, char *argv[]){
 
             free(C);
             free(B);
-            double_2D_array_free(A);
+            for (i=0;i<99;i++){
+                free(A[i]);
+            }
+            free(A);
         }//(i=1;i<n;i++)
     }//(eleccion==2)   
     

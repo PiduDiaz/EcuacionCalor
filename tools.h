@@ -12,7 +12,6 @@ float CalQ(float a, float b);
 
 double **alloc_2D_double(int nrows, int ncolumns);
 
-void double_2D_array_free(double **array);
 
 #endif
 
