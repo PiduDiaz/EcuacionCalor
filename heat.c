@@ -133,10 +133,6 @@ int main(int argc, char *argv[]){
                             for(k=1;k<101;k++){
                                 R[k]=strtold(pend,&pend);
                             }
-
-
-                        
-
                         }
                         conta++;
                     }
