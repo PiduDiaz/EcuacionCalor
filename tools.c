@@ -60,12 +60,14 @@ double *multiplicationMV(double **A,double *vector, int size_array){
 /*La funcion recibe las matrices como arreglos unidimensionales*/
 void solveSistema(double *a,double *b, int N ){
 
-  int i,j;
 
   int *ipiv = (int*) malloc(sizeof(int)*(N*N));
   lapack_int n=N,nrhs=1,lda=N,  ldb=1,info;
 
   info = LAPACKE_dgesv(LAPACK_ROW_MAJOR,n,nrhs,a,lda,ipiv,b,ldb);
+
+
+  free(ipiv);
 
   return;
 }

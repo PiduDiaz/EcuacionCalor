@@ -120,23 +120,29 @@ int main(int argc, char *argv[]){
     }
     fclose(datos);
 
-
+    
     }//explicito
+
 
     //euler implicito------------------------------------------------------------------------------------
     if(eleccion==2){
         double con1, con2;
+
+        
         con1 = lambda*I1;
         con2 = lambda*I2;
 
         for(i=1;i<n;i++){
             double **A;
             double *B, *C;
+            double gu;
 
             //creacion de matriz dinamica
             A=alloc_2D_double(99,99);
-            B=(double *)malloc(99*sizeof(double));
-            C=(double *)malloc(99*sizeof(double));
+            B=(double*)malloc((99*99)*sizeof(double));
+            C=(double*)malloc(99*sizeof(double));
+
+            printf("\nvuelta %.d \n",i);
 
             if ( A==NULL ){
                 printf("Allocation error");
@@ -152,12 +158,15 @@ int main(int argc, char *argv[]){
             }
 
             //frontera del arreglo C
-            C[0]=M[i-1][1]+(dt*CalQ(0.01,i*dt))+I1;
-            C[98]=M[i-1][99]+(dt*CalQ(0.99,i*dt))+I2;
+
+            C[0]=M[i-1][1]+(dt*CalQ(0.01,i*dt))+con1;
+            C[98]=M[i-1][99]+(dt*CalQ(0.99,i*dt))+con2;
+
+            
 
             //se llena el arreglo C
             for(j=1;j<98;j++){
-                C[j]= M[i-1][j+1]+(dt*CalQ(i*0.01,i*dt));
+                C[j]= M[i-1][j]+(dt*CalQ(i*0.01,i*dt));
             }
 
             //se llena el arreglo A
@@ -179,24 +188,39 @@ int main(int argc, char *argv[]){
 
             }
 
+            for(k=0;k<99;k++){
+                for(j=0;j<99;j++){
+                    B[k*99+j]=A[k][j];
+                }
+            }
 
+
+
+            for(int p=0;p<9801;p++){
+                B[p]=p/100;
+            }
             //se llama a la funcion solve
-            //B=solve(A,C);
+
+            solveSistema(B,C,99);
+            printf("se uso la funcion \n");
+
+
 
             //se ingresa los resultados a la matriz M
-            for(j=0;j<99;j++){
-                M[i][j+1]=B[j];
+            for(j=1;j<100;j++){
+                M[i][j]=C[j-1];
             }
 
             free(C);
             free(B);
-            for (i=0;i<99;i++){
-                free(A[i]);
+            for (k=0;k<99;k++){
+                free(A[k]);
             }
             free(A);
-        }//(i=1;i<n;i++)
-    }//(eleccion==2)
 
+        }//(i=1;i<n;i++)
+    }//(eleccion==2)   
+    
 
 
 
