@@ -110,7 +110,7 @@ int main(int argc, char *argv[]){
 
     //Registro de datos para gráficar: Creación de archivo
 
-    FILE *datos= fopen("datos.txt","w");
+    FILE *datos= fopen("datos1.txt","w");
     for (i=0;i<n;i++){
         iipaso = i*dt;
         for (j=0;j<101;j++){
@@ -127,6 +127,7 @@ int main(int argc, char *argv[]){
     //euler implicito------------------------------------------------------------------------------------
     if(eleccion==2){
         double con1, con2;
+        double  jpaso ,iipaso;
 
         
         con1 = lambda*I1;
@@ -219,6 +220,16 @@ int main(int argc, char *argv[]){
             free(A);
 
         }//(i=1;i<n;i++)
+
+        FILE *datos= fopen("datos2.txt","w");
+        for (i=0;i<n;i++){
+            iipaso = i*dt;
+            for (j=0;j<101;j++){
+                jpaso = j*0.01;
+                fprintf(datos,"%.4f,%.4f,%.4f\n",jpaso,iipaso,M[i][j]);
+            }
+        }
+        fclose(datos);
     }//(eleccion==2)   
     
 
