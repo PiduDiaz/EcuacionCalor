@@ -3,15 +3,17 @@
 #include <stdlib.h>
 #include <math.h>
 #include <getopt.h>
+#include <string.h>
 #include <lapacke.h>
 #include "tools.h"
 
+#define LONGITUD_MAXIMA_CADENA 1000000
 
 double **alloc_2D_double(int nrows, int ncolumns);
 
 int main(int argc, char *argv[]){
 
-    int eleccion , ban ,opcion;
+    int eleccion , ban ,opcion ,confirmacion;
     int i , j , k, n;
     double tiempof , dt , ipaso, alfa, I1, I2, lol;
 
@@ -97,14 +99,55 @@ int main(int argc, char *argv[]){
         }//for(j=1;j<99;j++)
 
         //condicion para saber si es una iteracion multiplo de 10
-       /* if(i%10==0){
-            FILE *restart= fopen("restart.dat","a");
+        if(i%10==0){
+            FILE *restart= fopen("restart1.dat","a");
+
             for(k=0;k<101;k++){
-                fprintf(restart,"%.2f,",M[i][k]);
+                fprintf(restart,"%.2f ",M[i][k]);
             }
-            fprintf(restart,"%.2f,%.2f,%.2f \n",dt,dx,lambda);
+            fprintf(restart,"%.2f %.2f %.2f \n",dt,dx,lambda);
             fclose(restart);
-        } */
+        }
+
+        if(i==25){
+            if(ban==1){
+                int falta = n-25;
+                
+                printf("Esta es la iteracion #25 \n");
+                printf("Faltan %d iteraciones, desea reiniciar? (1=Si , 0=No) \n",falta);
+                scanf("%d",&confirmacion);
+                if(confirmacion==1){
+                    double R[101] , num ;
+                    char *pend;
+                    FILE *rest=fopen("restart1.dat","r");
+                    if (!rest){
+                        printf("No se pudo abrir el archivo");
+                    }
+                    int conta = 1;
+                    char bufer[LONGITUD_MAXIMA_CADENA];
+                    while (fgets(bufer, LONGITUD_MAXIMA_CADENA, rest)){
+                        if (conta==2){
+ 
+                            R[0]=strtold(bufer,&pend);
+
+                            for(k=1;k<101;k++){
+                                R[k]=strtold(pend,&pend);
+                            }
+
+
+                        
+
+                        }
+                        conta++;
+                    }
+
+                    for(k=0;k<101;k++){
+                        M[i][k]=R[k];
+                    }
+                    fclose(rest);
+                }
+            }
+        }
 
     }//for(i=1;i<n;i++)
 
@@ -143,8 +186,6 @@ int main(int argc, char *argv[]){
             B=(double*)malloc((99*99)*sizeof(double));
             C=(double*)malloc(99*sizeof(double));
 
-            printf("\nvuelta %.d \n",i);
-
             if ( A==NULL ){
                 printf("Allocation error");
                 exit(1);
@@ -178,11 +219,14 @@ int main(int argc, char *argv[]){
                     if(j==k){
                         A[j][k]=lambda2;
                     }
-                    if (j-k==-1){
+                    else if (j-k==-1){
                         A[j][k]=-1*lambda;
                     }
-                    if (j-k==1){
+                    else if (j-k==1){
                         A[j][k]=-1*lambda;
+                    }
+                    else {
+                        A[j][k]=0;
                     }
 
                 }
@@ -195,15 +239,10 @@ int main(int argc, char *argv[]){
                 }
             }
 
-
-
-            for(int p=0;p<9801;p++){
-                B[p]=p/100;
-            }
+          
             //se llama a la funcion solve
 
             solveSistema(B,C,99);
-            printf("se uso la funcion \n");
 
 
 
@@ -219,8 +258,53 @@ int main(int argc, char *argv[]){
             }
             free(A);
 
+        if(i%10==0){// condicion para el archivo restart
+            FILE *restart= fopen("restart2.dat","a");
+            for(k=0;k<101;k++){
+                fprintf(restart,"%.2f ",M[i][k]);
+            }
+            fprintf(restart,"%.2f %.2f %.2f \n",dt,dx,lambda);
+            fclose(restart);
+        }
+        if(i==25){
+            if(ban==1){
+                int falta = n-25;
+                
+                printf("Esta es la iteracion #25 \n");
+                printf("Faltan %d iteraciones, desea reiniciar? (1=Si , 0=No) \n",falta);
+                scanf("%d",&confirmacion);
+                if(confirmacion==1){
+                    double R[101] , num ;
+                    char *pend;
+                    FILE *rest=fopen("restart2.dat","r");
+                    if (!rest){
+                        printf("No se pudo abrir el archivo");
+                    }
+                    int conta = 1;
+                    char bufer[LONGITUD_MAXIMA_CADENA];
+                    while (fgets(bufer, LONGITUD_MAXIMA_CADENA, rest)){
+                        if (conta==2){
+ 
+                            R[0]=strtold(bufer,&pend);
+
+                            for(k=1;k<101;k++){
+                                R[k]=strtold(pend,&pend);
+                            }
+
+                        }
+                        conta++;
+                    }
+
+                    for(k=0;k<101;k++){
+                        M[i][k]=R[k];
+                    }
+                    fclose(rest);
+                }
+            }
+        }
         }//(i=1;i<n;i++)
 
+        
         FILE *datos= fopen("datos2.txt","w");
         for (i=0;i<n;i++){
             iipaso = i*dt;

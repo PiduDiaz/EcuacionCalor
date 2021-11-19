@@ -23,10 +23,10 @@ Debug: tools.c heat.c tools.h
 	gcc $(CFLAGS2) tools.c heat.c -o $(BINARY) $(LDFLAGS) $(LAPACKEFLAG)
 
 clean:
-	rm -f $(BINARY) *.o *.txt
+	rm -f $(BINARY) *.o *.txt restart1.dat restart2.dat
 
 
-Descargas:
+Download:
 	sudo apt install liblapack3 
 	sudo apt install liblapack-dev 
 	sudo apt install libopenblas-base 
