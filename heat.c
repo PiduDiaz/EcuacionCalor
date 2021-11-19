@@ -3,6 +3,7 @@
 #include <stdlib.h>
 #include <math.h>
 #include <getopt.h>
+#include <lapacke.h>
 #include "tools.h"
 
 
@@ -11,11 +12,11 @@ double **alloc_2D_double(int nrows, int ncolumns);
 int main(int argc, char *argv[]){
 
     int eleccion , ban ,opcion;
-    int i , j , k, n; 
+    int i , j , k, n;
     double tiempof , dt , ipaso, alfa, I1, I2, lol;
-    
+
     double dx = 0.01;
-    
+
     ban=0;
 
     while ((opcion = getopt (argc, argv, "r")) != -1)
@@ -36,7 +37,7 @@ int main(int argc, char *argv[]){
     printf("\nEliga el metodo de euler que quiere utilizar (1 = explicito ; 2 = implicito) \n");
     scanf("%d",&eleccion);
 
-    
+
     printf("Introduzca el tiempo final \n");
     scanf("%lf",&tiempof);
 
@@ -64,7 +65,7 @@ int main(int argc, char *argv[]){
 
     printf("Numero de iteraciones: %d \n",n);
 
-    //matriz de datos 
+    //matriz de datos
     double **M;
 
     M = alloc_2D_double(n,101);
@@ -102,7 +103,7 @@ int main(int argc, char *argv[]){
                 fprintf(restart,"%.2f,",M[i][k]);
             }
             fprintf(restart,"%.2f,%.2f,%.2f \n",dt,dx,lambda);
-            fclose(restart);    
+            fclose(restart);
         } */
 
     }//for(i=1;i<n;i++)
@@ -116,7 +117,7 @@ int main(int argc, char *argv[]){
             jpaso = j*0.01;
             fprintf(datos,"%.4f,%.4f,%.4f\n",jpaso,iipaso,M[i][j]);
         }
-    } 
+    }
     fclose(datos);
 
 
@@ -131,7 +132,7 @@ int main(int argc, char *argv[]){
         for(i=1;i<n;i++){
             double **A;
             double *B, *C;
-            
+
             //creacion de matriz dinamica
             A=alloc_2D_double(99,99);
             B=(double *)malloc(99*sizeof(double));
@@ -181,7 +182,7 @@ int main(int argc, char *argv[]){
 
             //se llama a la funcion solve
             //B=solve(A,C);
-            
+
             //se ingresa los resultados a la matriz M
             for(j=0;j<99;j++){
                 M[i][j+1]=B[j];
@@ -194,8 +195,8 @@ int main(int argc, char *argv[]){
             }
             free(A);
         }//(i=1;i<n;i++)
-    }//(eleccion==2)   
-    
+    }//(eleccion==2)
+
 
 
 
@@ -214,5 +215,3 @@ int main(int argc, char *argv[]){
     free(M);
     return 0;
     }
-
-
